@@ -107,7 +107,24 @@ html, body { height: 100%; overflow: hidden; background: var(--bg); color: var(-
 
 .note-divider { height: 1px; background: var(--border); margin-left: 68px; }
 
-.footer-note { text-align: center; font-size: 0.75rem; color: var(--text3); margin-top: 24px; padding-bottom: 40px; }
+.footer-note { text-align: center; font-size: 0.75rem; color: var(--text3); margin-top: 24px; padding-bottom: 80px; }
+
+.main-bottom-bar {
+  position: absolute; bottom: 0; left: 0; width: 100%;
+  height: 80px; padding: 0 16px 20px;
+  background: rgba(15,15,15,0.85); backdrop-filter: blur(10px);
+  border-top: 1px solid var(--border);
+  display: flex; align-items: center; justify-content: space-between;
+  z-index: 10;
+}
+.bottom-btn {
+  background: none; border: none; color: var(--accent);
+  padding: 8px; cursor: pointer; display: flex; align-items: center; justify-content: center;
+}
+.bottom-btn:active { opacity: 0.6; }
+.bottom-note-count {
+  font-size: 0.75rem; color: var(--text); font-weight: 500;
+}
 
 
 /* ── DETAIL PAGE ── */
@@ -134,23 +151,23 @@ html, body { height: 100%; overflow: hidden; background: var(--bg); color: var(-
   padding: 14px; border-radius: 12px;
   background: var(--bg2); margin-bottom: 8px;
 }
-.list-item.forced { background: rgba(255,159,10,0.07); border: 1px solid rgba(255,159,10,0.2); }
+/* .list-item.forced { background: rgba(255,159,10,0.07); border: 1px solid rgba(255,159,10,0.2); } */
 
 .item-num {
   font-size: 0.75rem; font-weight: 700; min-width: 26px;
   text-align: right; color: var(--text3); flex-shrink: 0;
   font-variant-numeric: tabular-nums;
 }
-.list-item.forced .item-num { color: var(--accent); }
+/* .list-item.forced .item-num { color: var(--accent); } */
 
 .item-dot { width: 6px; height: 6px; border-radius: 50%; background: var(--border2); flex-shrink: 0; }
 .celebs-page .item-dot { background: rgba(191,90,242,0.45); }
 .foods-page  .item-dot { background: rgba(48,209,88,0.45); }
 .cards-page  .item-dot { background: rgba(10,132,255,0.45); }
-.list-item.forced .item-dot { background: var(--accent); }
+/* .list-item.forced .item-dot { background: var(--accent); } */
 
 .item-name { font-size: 0.95rem; color: var(--text); flex: 1; font-weight: 500; }
-.list-item.forced .item-name { font-weight: 700; }
+/* .list-item.forced .item-name { font-weight: 700; } */
 .item-suffix { font-size: 0.9rem; color: var(--text3); flex-shrink: 0; }
 .item-suffix.red-suit { color: var(--red); }
 

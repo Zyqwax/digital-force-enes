@@ -74,7 +74,13 @@ document.querySelectorAll('.note-entry').forEach(btn => {
   });
 });
 
-document.getElementById('back-btn').addEventListener('click', closeDetail);
+document.getElementById('back-btn').addEventListener('click', () => {
+  if (window.location.hash) {
+    history.back();
+  } else {
+    closeDetail();
+  }
+});
 
 function openDetail(key) {
   const titles = { celebs: 'Ünlüler', foods: 'Yemekler', cards: 'Kartlar' };
@@ -103,6 +109,10 @@ function openDetail(key) {
   mainPage.classList.add('page-left');
   detailPage.classList.remove('page-right');
   detailPage.classList.add('page-center');
+
+  if (window.location.hash !== `#${key}`) {
+    history.pushState({ page: 'detail', key: key }, '', `#${key}`);
+  }
 }
 
 function closeDetail() {
@@ -306,7 +316,11 @@ document.getElementById('reset-all-btn').addEventListener('click', () => {
   ['celebs','foods','cards'].forEach(k => { state[k].forcedWord = null; numStr[k] = ''; });
   initLists(); closePanel();
   // Eğer ana sayfada değilsek ana sayfaya dön
-  closeDetail();
+  if (window.location.hash) {
+    history.back();
+  } else {
+    closeDetail();
+  }
   showToast('Listeler yeniden karıştırıldı');
 });
 
@@ -326,3 +340,19 @@ function showToast(msg) {
 //  INIT
 // ═══════════════════════════════════════════
 initLists();
+
+// Clear hash on init if any
+if (window.location.hash) {
+  history.replaceState(null, '', window.location.pathname);
+}
+
+window.addEventListener('popstate', (e) => {
+  if (!window.location.hash) {
+    closeDetail();
+  } else {
+    const key = window.location.hash.substring(1);
+    if (['celebs','foods','cards'].includes(key)) {
+      openDetail(key);
+    }
+  }
+});
