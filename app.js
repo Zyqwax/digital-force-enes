@@ -74,6 +74,69 @@ document.querySelectorAll('.note-entry').forEach(btn => {
   });
 });
 
+// Arama Yapma (Search)
+const searchInput = document.getElementById('main-search-input');
+if (searchInput) {
+  searchInput.addEventListener('input', (e) => {
+    const term = e.target.value.toLowerCase();
+    document.querySelectorAll('.note-entry').forEach(entry => {
+      const title = entry.querySelector('.note-title').textContent.toLowerCase();
+      // Basit arama: başlıkta geçiyorsa göster
+      if (title.includes(term)) {
+        entry.style.display = 'flex';
+      } else {
+        entry.style.display = 'none';
+      }
+    });
+  });
+}
+
+// Yeni Not Sayfası (Compose)
+const composePage = document.getElementById('compose-page');
+const composeFakeBtn = document.querySelector('.fake-compose');
+if (composeFakeBtn) {
+  composeFakeBtn.addEventListener('click', () => {
+    openCompose();
+  });
+}
+
+function openCompose() {
+  mainPage.classList.remove('page-center');
+  mainPage.classList.add('page-left');
+  composePage.classList.remove('page-right');
+  composePage.classList.add('page-center');
+  if (window.location.hash !== '#compose') {
+    history.pushState({ page: 'compose' }, '', '#compose');
+  }
+}
+
+function closeCompose() {
+  mainPage.classList.remove('page-left');
+  mainPage.classList.add('page-center');
+  composePage.classList.remove('page-center');
+  composePage.classList.add('page-right');
+  
+  // İsteğe bağlı: Kapatırken içeriği temizle
+  document.getElementById('compose-title').value = '';
+  document.getElementById('compose-body').value = '';
+}
+
+document.getElementById('compose-back-btn')?.addEventListener('click', () => {
+  if (window.location.hash) {
+    history.back();
+  } else {
+    closeCompose();
+  }
+});
+document.getElementById('compose-done-btn')?.addEventListener('click', () => {
+  // Notu kaydetme animasyonu/hissi (gerçekte listeye eklenmiyor, sadece UI olarak inandırıcı)
+  if (window.location.hash) {
+    history.back();
+  } else {
+    closeCompose();
+  }
+});
+
 document.getElementById('back-btn').addEventListener('click', () => {
   if (window.location.hash) {
     history.back();
@@ -102,6 +165,24 @@ function openDetail(key) {
       : '';
     row.innerHTML = `<span class="item-num">${i+1}</span><span class="item-dot"></span><span class="item-name">${item.name}</span>${suf}`;
     detailList.appendChild(row);
+  });
+
+  // Nota ekleme (Add item to list)
+  const addRow = document.createElement('div');
+  addRow.className = 'list-item';
+  addRow.innerHTML = `<span class="item-num" style="color:var(--accent); font-size:1.4rem; font-weight:300; line-height:1;">+</span><input type="text" placeholder="Madde ekle..." style="flex:1; background:none; border:none; color:var(--text); font-size:0.95rem; outline:none; font-family:inherit;">`;
+  detailList.appendChild(addRow);
+
+  const newInp = addRow.querySelector('input');
+  newInp.addEventListener('keypress', (e) => {
+    if (e.key === 'Enter' && newInp.value.trim() !== '') {
+      s.items.push({ name: newInp.value.trim() });
+      openDetail(key); // Listeyi yeniden çiz
+      // En alta kaydır
+      setTimeout(() => {
+        detailPage.scrollTo(0, detailPage.scrollHeight);
+      }, 50);
+    }
   });
 
   // Animasyon
@@ -232,26 +313,27 @@ function syncNumRows() {
 
 // Apply
 document.getElementById('apply-btn').addEventListener('click', () => {
-  let applied = false;
+  let appliedKeys = [];
   ['celebs','foods','cards'].forEach(key => {
     const num  = numStr[key] ? parseInt(numStr[key]) : null;
     const word = state[key].forcedWord;
     if (num && word) {
       applyForce(key, num, word);
-      applied = true;
+      appliedKeys.push(key);
+      numStr[key] = ''; // İşlem bitince sayıyı temizle ki tekrar tekrar aynı sayfaya atmasın
+      updateNumDisplay(key, null);
     }
   });
-  if (applied) {
+  if (appliedKeys.length > 0) {
     closePanel();
     showToast('✓ Force uygulandı');
     
     // Uygulama sonrası doğrudan o sayfayı aç! (iOS notes gibi içine gir)
-    const firstKey = ['celebs','foods','cards'].find(k => numStr[k] && state[k].forcedWord);
-    if (firstKey) {
-      openDetail(firstKey);
-    }
+    // Eğer o an seçili olan sekme (activeNumList) de uygulandıysa onu aç, yoksa ilk uygulananı aç.
+    const targetKey = appliedKeys.includes(activeNumList) ? activeNumList : appliedKeys[0];
+    openDetail(targetKey);
   } else {
-    showToast('Kelime seçilmedi! Önce Kelime Ayarı yapın.');
+    showToast('Kelime veya numara eksik!');
   }
 });
 
@@ -349,10 +431,13 @@ if (window.location.hash) {
 window.addEventListener('popstate', (e) => {
   if (!window.location.hash) {
     closeDetail();
+    closeCompose();
   } else {
     const key = window.location.hash.substring(1);
     if (['celebs','foods','cards'].includes(key)) {
       openDetail(key);
+    } else if (key === 'compose') {
+      openCompose();
     }
   }
 });

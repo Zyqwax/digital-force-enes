@@ -22,8 +22,7 @@ const CELEBS_RAW = [
   'Elon Musk','Steve Jobs','Bill Gates','Mark Zuckerberg','Jeff Bezos',
   'Barack Obama','Nelson Mandela','Mahatma Gandhi','Napoleon Bonaparte','Shakespeare',
   'Mozart','Beethoven','Pablo Picasso','Vincent van Gogh','Leonardo da Vinci',
-  'Cristiano Ronaldo','Lionel Messi','Muhammad Ali','Michael Jordan','Usain Bolt',
-  'Roger Federer','Tiger Woods','Serena Williams','LeBron James','Zlatan Ibrahimovic',
+  'Cristiano Ronaldo','Lionel Messi','Muhammad Ali','Michael Jordan','Usain Bolt'
 ];
 
 const FOODS_RAW = [

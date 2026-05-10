@@ -1,4 +1,4 @@
-const CACHE_NAME = 'notlarim-v2';
+const CACHE_NAME = 'notlarim-v4';
 const ASSETS = [
   './',
   './index.html',
